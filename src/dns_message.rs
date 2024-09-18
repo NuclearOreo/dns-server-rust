@@ -1,4 +1,20 @@
-#[derive(Default, Debug, PartialEq, Eq)]
+#[derive(Default, Debug, Clone)]
+pub struct DNSMessage {
+    pub header: Header,
+    pub questions: Vec<Question>,
+}
+
+impl DNSMessage {
+    pub fn into_bytes(&self) -> Vec<u8> {
+        let mut buf = self.header.into_bytes();
+        for question in &self.questions {
+            buf.extend_from_slice(&question.into_bytes());
+        }
+        buf
+    }
+}
+
+#[derive(Default, Debug, Clone, Copy)]
 pub struct Header {
     pub packet_id: u16,
     pub query_or_response: bool,
@@ -18,7 +34,7 @@ pub struct Header {
 }
 
 impl Header {
-    pub fn to_bytes(&self) -> Vec<u8> {
+    pub fn into_bytes(&self) -> Vec<u8> {
         let mut buf = Vec::new();
         buf.extend_from_slice(&self.packet_id.to_be_bytes());
 
@@ -38,6 +54,29 @@ impl Header {
         buf.extend_from_slice(&self.answer_count.to_be_bytes());
         buf.extend_from_slice(&self.authoritative_count.to_be_bytes());
         buf.extend_from_slice(&self.additional_count.to_be_bytes());
+        buf
+    }
+}
+
+#[derive(Default, Debug, Clone)]
+pub struct Question {
+    pub tokens: Vec<String>,
+    // todo - create enum for types
+    pub types: u16,
+    // todo - create enum for class
+    pub class: u16,
+}
+
+impl Question {
+    pub fn into_bytes(&self) -> Vec<u8> {
+        let mut buf = Vec::new();
+        for token in &self.tokens {
+            buf.push(token.len() as u8);
+            buf.extend_from_slice(token.as_bytes());
+        }
+        buf.push(0);
+        buf.extend_from_slice(&self.types.to_be_bytes());
+        buf.extend_from_slice(&self.class.to_be_bytes());
         buf
     }
 }
