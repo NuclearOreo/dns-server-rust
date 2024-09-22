@@ -1,6 +1,6 @@
 mod dns_message;
 
-use dns_message::{DNSMessage, Header, Question};
+use dns_message::{Answer, DNSMessage, Header, Question};
 use std::net::UdpSocket;
 
 const IP: &str = "127.0.0.1";
@@ -22,7 +22,7 @@ fn main() {
             reserved: 0,
             response_code: 0,
             question_count: 1,
-            answer_count: 0,
+            answer_count: 1,
             authoritative_count: 0,
             additional_count: 0,
         },
@@ -30,6 +30,14 @@ fn main() {
             tokens: vec!["codecrafters".to_string(), "io".to_string()],
             types: 1,
             class: 1,
+        }],
+        answers: vec![Answer {
+            tokens: vec!["codecrafters".to_string(), "io".to_string()],
+            types: 1,
+            class: 1,
+            ttl: 0,
+            length: 0,
+            data: vec![8, 8, 8, 8],
         }],
     };
 
