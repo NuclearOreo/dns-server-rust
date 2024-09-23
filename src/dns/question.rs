@@ -20,3 +20,29 @@ impl Question {
         buf
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_question_into_bytes() {
+        let question = Question {
+            tokens: vec!["codecrafters".to_string(), "io".to_string()],
+            types: 1,
+            class: 1,
+        };
+
+        let bytes = question.into_bytes();
+        let expected_bytes = vec![
+            12, b'c', b'o', b'd', b'e', b'c', b'r', b'a', b'f', b't', b'e', b'r',
+            b's', // "codecrafters"
+            2, b'i', b'o', // "io"
+            0,    // end of tokens
+            0x00, 0x01, // types
+            0x00, 0x01, // class
+        ];
+
+        assert_eq!(bytes, expected_bytes);
+    }
+}

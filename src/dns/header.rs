@@ -41,3 +41,40 @@ impl Header {
         buf
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_header_into_bytes() {
+        let header = Header {
+            packet_id: 1234,
+            query_or_response: true,
+            opcode: 0,
+            authoritative_answer: false,
+            truncated_message: false,
+            recursion_desired: false,
+            recursion_available: false,
+            reserved: 0,
+            response_code: 0,
+            question_count: 0,
+            answer_count: 0,
+            authoritative_count: 0,
+            additional_count: 0,
+        };
+
+        let bytes = header.into_bytes();
+        let expected_bytes = vec![
+            0x04, 0xD2, // packet_id
+            0x80, // query_or_response, opcode, authoritative_answer, truncated_message, recursion_desired
+            0x00, // recursion_available, reserved, response_code
+            0x00, 0x00, // question_count
+            0x00, 0x00, // answer_count
+            0x00, 0x00, // authoritative_count
+            0x00, 0x00, // additional_count
+        ];
+
+        assert_eq!(bytes, expected_bytes);
+    }
+}

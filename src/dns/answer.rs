@@ -26,3 +26,35 @@ impl Answer {
         buf
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_answer_into_bytes() {
+        let answer = Answer {
+            tokens: vec!["codecrafters".to_string(), "io".to_string()],
+            types: 1,
+            class: 1,
+            ttl: 3600,
+            length: 4,
+            data: vec![8, 8, 8, 8],
+        };
+
+        let bytes = answer.into_bytes();
+        let expected_bytes = vec![
+            12, b'c', b'o', b'd', b'e', b'c', b'r', b'a', b'f', b't', b'e', b'r',
+            b's', // "codecrafters"
+            2, b'i', b'o', // "io"
+            0,    // end of tokens
+            0x00, 0x01, // types
+            0x00, 0x01, // class
+            0x00, 0x00, 0x0E, 0x10, // ttl (3600 seconds)
+            0x00, 0x04, // length
+            8, 8, 8, 8, // data
+        ];
+
+        assert_eq!(bytes, expected_bytes);
+    }
+}
