@@ -1,6 +1,6 @@
-mod dns_message;
+mod dns;
 
-use dns_message::{Answer, DNSMessage, Header, Question};
+use dns::{Answer, DnsMessage, Header, Question};
 use std::net::UdpSocket;
 
 const IP: &str = "127.0.0.1";
@@ -10,7 +10,7 @@ fn main() {
     // You can use print statements as follows for debugging, they'll be visible when running tests.
     println!("Logs from your program will appear here!");
 
-    let dns_message = DNSMessage {
+    let dns_message = DnsMessage {
         header: Header {
             packet_id: 1234,
             query_or_response: true,
