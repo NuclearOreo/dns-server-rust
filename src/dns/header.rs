@@ -1,9 +1,10 @@
+use crate::dns::enums::Opcode;
+
 #[derive(Default, Debug, Clone, Copy)]
 pub struct Header {
     pub packet_id: u16,
     pub query_or_response: bool,
-    // todo - create enum for opcode
-    pub opcode: u8,
+    pub opcode: Opcode,
     pub authoritative_answer: bool,
     pub truncated_message: bool,
     pub recursion_desired: bool,
@@ -23,7 +24,7 @@ impl Header {
         buf.extend_from_slice(&self.packet_id.to_be_bytes());
 
         let mut byte = (self.query_or_response as u8) << 7;
-        byte |= self.opcode << 3;
+        byte |= u8::from(self.opcode);
         byte |= (self.authoritative_answer as u8) << 2;
         byte |= (self.truncated_message as u8) << 1;
         byte |= self.recursion_desired as u8;
@@ -51,7 +52,7 @@ mod tests {
         let header = Header {
             packet_id: 1234,
             query_or_response: true,
-            opcode: 0,
+            opcode: Opcode::Query,
             authoritative_answer: false,
             truncated_message: false,
             recursion_desired: false,

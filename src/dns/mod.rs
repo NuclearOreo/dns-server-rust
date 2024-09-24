@@ -9,3 +9,5 @@ pub use header::Header;
 
 mod message;
 pub use message::DnsMessage;
+
+pub mod enums;

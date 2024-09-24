@@ -5,7 +5,7 @@ use log;
 // Internal modules
 mod dns;
 
-use dns::{Answer, DnsMessage, Header, Question};
+use dns::{enums, Answer, DnsMessage, Header, Question};
 use std::net::UdpSocket;
 
 const IP: &str = "127.0.0.1";
@@ -19,7 +19,7 @@ fn main() {
         header: Header {
             packet_id: 1234,
             query_or_response: true,
-            opcode: 0,
+            opcode: enums::Opcode::Query,
             authoritative_answer: false,
             truncated_message: false,
             recursion_desired: false,
