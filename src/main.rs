@@ -8,6 +8,7 @@ mod dns;
 use dns::{enums, Answer, DnsMessage, Header, Question};
 use std::net::UdpSocket;
 
+// Constants
 const IP: &str = "127.0.0.1";
 const PORT: u16 = 2053;
 
@@ -25,7 +26,7 @@ fn main() {
             recursion_desired: false,
             recursion_available: false,
             reserved: 0,
-            response_code: 0,
+            response_code: enums::RCode::NoError,
             question_count: 1,
             answer_count: 1,
             authoritative_count: 0,

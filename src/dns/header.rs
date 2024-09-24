@@ -1,4 +1,4 @@
-use crate::dns::enums::Opcode;
+use crate::dns::enums::{Opcode, RCode};
 
 #[derive(Default, Debug, Clone, Copy)]
 pub struct Header {
@@ -10,8 +10,7 @@ pub struct Header {
     pub recursion_desired: bool,
     pub recursion_available: bool,
     pub reserved: u8,
-    // todo - create enum for response code
-    pub response_code: u8,
+    pub response_code: RCode,
     pub question_count: u16,
     pub answer_count: u16,
     pub authoritative_count: u16,
@@ -32,7 +31,7 @@ impl Header {
 
         let mut byte = (self.recursion_available as u8) << 7;
         byte |= self.reserved << 4;
-        byte |= self.response_code;
+        byte |= u8::from(self.response_code);
         buf.push(byte);
 
         buf.extend_from_slice(&self.question_count.to_be_bytes());
@@ -58,7 +57,7 @@ mod tests {
             recursion_desired: false,
             recursion_available: false,
             reserved: 0,
-            response_code: 0,
+            response_code: RCode::NoError,
             question_count: 0,
             answer_count: 0,
             authoritative_count: 0,

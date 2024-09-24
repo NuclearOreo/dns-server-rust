@@ -23,7 +23,7 @@ impl DnsMessage {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::dns::enums;
+    use crate::dns::enums::{Opcode, RCode};
 
     #[test]
     fn test_dns_message_into_bytes() {
@@ -31,13 +31,13 @@ mod tests {
             header: Header {
                 packet_id: 1234,
                 query_or_response: true,
-                opcode: enums::Opcode::Query,
+                opcode: Opcode::Query,
                 authoritative_answer: false,
                 truncated_message: false,
                 recursion_desired: false,
                 recursion_available: false,
                 reserved: 0,
-                response_code: 0,
+                response_code: RCode::NoError,
                 question_count: 1,
                 answer_count: 1,
                 authoritative_count: 0,
