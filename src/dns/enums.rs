@@ -1,5 +1,5 @@
 #[repr(u8)]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Opcode {
     Query = 0,
     IQuery = 1,
@@ -36,7 +36,7 @@ impl From<Opcode> for u8 {
 }
 
 #[repr(u8)]
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum RCode {
     NoError = 0,
     FormatError = 1,
