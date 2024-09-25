@@ -1,10 +1,10 @@
+use crate::dns::enums::{QueryClass, QueryType};
+
 #[derive(Default, Debug, Clone)]
 pub struct Answer {
     pub tokens: Vec<String>,
-    // todo - create enum for types
-    pub types: u16,
-    pub class: u16,
-    // todo - create enum for types
+    pub types: QueryType,
+    pub class: QueryClass,
     pub ttl: u32,
     pub length: u16,
     pub data: Vec<u8>,
@@ -18,8 +18,8 @@ impl Answer {
             buf.extend_from_slice(token.as_bytes());
         }
         buf.push(0);
-        buf.extend_from_slice(&self.types.to_be_bytes());
-        buf.extend_from_slice(&self.class.to_be_bytes());
+        buf.extend_from_slice(&u16::from(self.types).to_be_bytes());
+        buf.extend_from_slice(&u16::from(self.class).to_be_bytes());
         buf.extend_from_slice(&self.ttl.to_be_bytes());
         buf.extend_from_slice(&self.length.to_be_bytes());
         buf.extend_from_slice(&self.data);
@@ -35,8 +35,8 @@ mod tests {
     fn test_answer_into_bytes() {
         let answer = Answer {
             tokens: vec!["codecrafters".to_string(), "io".to_string()],
-            types: 1,
-            class: 1,
+            types: QueryType::A,
+            class: QueryClass::IN,
             ttl: 3600,
             length: 4,
             data: vec![8, 8, 8, 8],

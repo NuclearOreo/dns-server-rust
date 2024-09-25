@@ -39,8 +39,8 @@ fn main() {
         }],
         answers: vec![Answer {
             tokens: vec!["codecrafters".to_string(), "io".to_string()],
-            types: 1,
-            class: 1,
+            types: enums::QueryType::A,
+            class: enums::QueryClass::IN,
             ttl: 0,
             length: 0,
             data: vec![8, 8, 8, 8],

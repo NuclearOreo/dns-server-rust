@@ -23,7 +23,7 @@ impl DnsMessage {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::dns::enums::{Opcode, RCode};
+    use crate::dns::enums::{Opcode, QueryClass, QueryType, RCode};
 
     #[test]
     fn test_dns_message_into_bytes() {
@@ -50,8 +50,8 @@ mod tests {
             }],
             answers: vec![Answer {
                 tokens: vec!["codecrafters".to_string(), "io".to_string()],
-                types: 1,
-                class: 1,
+                types: QueryType::A,
+                class: QueryClass::IN,
                 ttl: 3600,
                 length: 4,
                 data: vec![8, 8, 8, 8],
