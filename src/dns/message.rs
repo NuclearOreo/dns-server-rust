@@ -45,8 +45,8 @@ mod tests {
             },
             questions: vec![Question {
                 tokens: vec!["codecrafters".to_string(), "io".to_string()],
-                types: 1,
-                class: 1,
+                types: QueryType::A,
+                class: QueryClass::IN,
             }],
             answers: vec![Answer {
                 tokens: vec!["codecrafters".to_string(), "io".to_string()],

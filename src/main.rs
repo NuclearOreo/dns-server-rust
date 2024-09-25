@@ -34,8 +34,8 @@ fn main() {
         },
         questions: vec![Question {
             tokens: vec!["codecrafters".to_string(), "io".to_string()],
-            types: 1,
-            class: 1,
+            types: enums::QueryType::A,
+            class: enums::QueryClass::IN,
         }],
         answers: vec![Answer {
             tokens: vec!["codecrafters".to_string(), "io".to_string()],
