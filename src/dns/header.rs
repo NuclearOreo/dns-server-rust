@@ -1,5 +1,7 @@
 use crate::dns::enums::{Opcode, RCode};
 
+pub const HEADER_SIZE: usize = 12;
+
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Header {
     pub packet_id: u16,

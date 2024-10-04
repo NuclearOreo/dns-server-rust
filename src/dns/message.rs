@@ -1,3 +1,4 @@
+use crate::dns::header::HEADER_SIZE;
 use crate::dns::{Answer, Header, Question};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
@@ -22,9 +23,9 @@ impl DnsMessage {
     pub fn from_bytes(bytes: &[u8]) -> Self {
         let mut msg = DnsMessage::default();
         // Parse header
-        msg.header = Header::from_bytes(&bytes[0..12]);
+        msg.header = Header::from_bytes(&bytes[0..HEADER_SIZE]);
         // Parse questions
-        let mut offset = 12;
+        let mut offset = HEADER_SIZE;
         for _ in 0..msg.header.question_count {
             let (question, new_offset) = Question::from_bytes(&bytes[offset..]);
             msg.questions.push(question);
