@@ -26,12 +26,25 @@ impl Question {
 
         // Parse tokens
         loop {
-            let token_len = bytes[offset] as usize;
-            offset += 1;
-            let token = String::from_utf8_lossy(&bytes[offset..offset + token_len]).into_owned();
-            tokens.push(token);
-            offset += token_len;
-
+            // Compress token
+            if bytes[offset] & 0xC0 == 0xC0 {
+                let mut ptr =
+                    u16::from_be_bytes([bytes[offset] & 0x3F, bytes[offset + 2]]) as usize;
+                offset += 2;
+                let token_len = bytes[ptr] as usize;
+                ptr += 1;
+                let token = String::from_utf8_lossy(&bytes[ptr..ptr + token_len]).into_owned();
+                tokens.push(token);
+            // Normal token
+            } else {
+                let token_len = bytes[offset] as usize;
+                offset += 1;
+                let token =
+                    String::from_utf8_lossy(&bytes[offset..offset + token_len]).into_owned();
+                tokens.push(token);
+                offset += token_len;
+            }
+            // End
             if bytes[offset] == 0 {
                 offset += 1;
                 break;
