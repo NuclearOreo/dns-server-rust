@@ -29,7 +29,7 @@ impl Question {
             // Compress token
             if bytes[offset] & 0xC0 == 0xC0 {
                 let mut ptr =
-                    u16::from_be_bytes([bytes[offset] & 0x3F, bytes[offset + 2]]) as usize;
+                    u16::from_be_bytes([bytes[offset] & 0x3F, bytes[offset + 1]]) as usize;
                 offset += 2;
                 let token_len = bytes[ptr] as usize;
                 ptr += 1;
