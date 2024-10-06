@@ -1,3 +1,5 @@
+use std::net::UdpSocket;
+
 use crate::dns::enums::{Opcode, RCode};
 use crate::dns::{Answer, DnsMessage};
 
@@ -35,4 +37,46 @@ pub fn process(bytes: &[u8]) -> Vec<u8> {
     log::debug!("Processed message: {:#?}", msg);
 
     msg.into_bytes()
+}
+
+pub fn forward(address: &str, socket: &UdpSocket, bytes: &[u8]) -> Vec<u8> {
+    log::info!("Forwarding DNS request");
+    let msg = DnsMessage::from_bytes(bytes);
+    let mut final_response = DnsMessage::default();
+
+    log::info!("Breaking Question Apart");
+    // Breaking Questions Apart
+    for i in 0..msg.header.question_count as usize {
+        // Buffer for response
+        let mut buf = [0; 512];
+
+        // Creating new Message
+        let mut new_msg = DnsMessage::default();
+        new_msg.header = msg.header.clone();
+        new_msg.header.question_count = 1;
+        new_msg.questions = vec![msg.questions[i].clone()];
+
+        // Sending, Receiving and Parsing Response
+        socket
+            .send_to(&new_msg.into_bytes(), address)
+            .expect("Expected to Send");
+        socket.recv(&mut buf).expect("Expected to Receive bytes");
+        let response = DnsMessage::from_bytes(&buf);
+        log::debug!("{:#?}", response);
+
+        // Updating Final Response
+        final_response.header = response.header.clone();
+        if response.questions.len() == 1 {
+            final_response.questions.push(response.questions[0].clone());
+        }
+        if response.answers.len() == 1 {
+            final_response.answers.push(response.answers[0].clone());
+        }
+    }
+
+    final_response.header.question_count = final_response.questions.len() as u16;
+    final_response.header.answer_count = final_response.answers.len() as u16;
+
+    log::info!("Sending Final Response");
+    final_response.into_bytes()
 }

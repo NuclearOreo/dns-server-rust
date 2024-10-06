@@ -25,6 +25,44 @@ impl Answer {
         buf.extend_from_slice(&self.data);
         buf
     }
+
+    pub fn from_bytes(bytes: &[u8], mut offset: usize) -> (Self, usize) {
+        let mut tokens = Vec::new();
+        while bytes[offset] != 0 {
+            let len = bytes[offset] as usize;
+            offset += 1;
+            let token = String::from_utf8(bytes[offset..offset + len].to_vec()).unwrap();
+            tokens.push(token);
+            offset += len;
+        }
+        offset += 1; // skip the 0 byte
+        let types = QueryType::from(u16::from_be_bytes([bytes[offset], bytes[offset + 1]]));
+        offset += 2;
+        let class = QueryClass::from(u16::from_be_bytes([bytes[offset], bytes[offset + 1]]));
+        offset += 2;
+        let ttl = u32::from_be_bytes([
+            bytes[offset],
+            bytes[offset + 1],
+            bytes[offset + 2],
+            bytes[offset + 3],
+        ]);
+        offset += 4;
+        let length = u16::from_be_bytes([bytes[offset], bytes[offset + 1]]);
+        offset += 2;
+        let data = bytes[offset..offset + (length as usize)].to_vec();
+        offset += length as usize;
+        (
+            Self {
+                tokens,
+                types,
+                class,
+                ttl,
+                length,
+                data,
+            },
+            offset,
+        )
+    }
 }
 
 #[cfg(test)]
@@ -56,5 +94,22 @@ mod tests {
         ];
 
         assert_eq!(bytes, expected_bytes);
+    }
+
+    #[test]
+    fn test_answer_from_bytes() {
+        let original_answer = Answer {
+            tokens: vec!["codecrafters".to_string(), "io".to_string()],
+            types: QueryType::A,
+            class: QueryClass::IN,
+            ttl: 3600,
+            length: 4,
+            data: vec![8, 8, 8, 8],
+        };
+
+        let bytes = original_answer.into_bytes();
+        let (final_answer, _) = Answer::from_bytes(&bytes, 0);
+
+        assert_eq!(original_answer, final_answer);
     }
 }

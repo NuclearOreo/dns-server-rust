@@ -1,3 +1,5 @@
+use std::usize;
+
 use crate::dns::enums::{QueryClass, QueryType};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
@@ -20,46 +22,40 @@ impl Question {
         buf
     }
 
-    pub fn from_bytes(bytes: &[u8]) -> (Self, usize) {
+    pub fn from_bytes(bytes: &[u8], mut offset: usize) -> (Self, usize) {
         let mut tokens = Vec::new();
-        let mut offset = 0;
+        let mut old_offset = usize::MAX;
 
         // Parse tokens
-        loop {
+        while bytes[offset] != 0 {
             // Compress token
             if bytes[offset] & 0xC0 == 0xC0 {
-                let mut ptr =
-                    u16::from_be_bytes([bytes[offset] & 0x3F, bytes[offset + 1]]) as usize;
-                offset += 2;
-                let token_len = bytes[ptr] as usize;
-                ptr += 1;
-                let token = String::from_utf8_lossy(&bytes[ptr..ptr + token_len]).into_owned();
-                tokens.push(token);
+                let ptr = u16::from_be_bytes([bytes[offset] & 0x3F, bytes[offset + 1]]) as usize;
+                old_offset = offset;
+                offset = ptr;
+            }
             // Normal token
-            } else {
-                let token_len = bytes[offset] as usize;
-                offset += 1;
-                let token =
-                    String::from_utf8_lossy(&bytes[offset..offset + token_len]).into_owned();
-                tokens.push(token);
-                offset += token_len;
-            }
-            // End
-            if bytes[offset] == 0 {
-                offset += 1;
-                break;
-            }
+            let token_len = bytes[offset] as usize;
+            offset += 1;
+            let token = String::from_utf8_lossy(&bytes[offset..offset + token_len]).into_owned();
+            tokens.push(token);
+            offset += token_len;
+        }
+
+        // Skip the zero byte and/or reset offset
+        offset += 1;
+        if old_offset != usize::MAX {
+            offset = old_offset + 2;
         }
 
         // Parse types and class
         let types = QueryType::from(u16::from_be_bytes([bytes[offset], bytes[offset + 1]]));
         offset += 2;
-
         let class = QueryClass::from(u16::from_be_bytes([bytes[offset], bytes[offset + 1]]));
         offset += 2;
 
         (
-            Question {
+            Self {
                 tokens,
                 types,
                 class,
@@ -105,7 +101,7 @@ mod tests {
             0x00, 0x01, // class
         ];
 
-        let (question, _) = Question::from_bytes(&from_bytes);
+        let (question, _) = Question::from_bytes(&from_bytes, 0);
         let expected_question = Question {
             tokens: vec!["codecrafters".to_string(), "io".to_string()],
             types: QueryType::A,

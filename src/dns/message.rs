@@ -27,9 +27,15 @@ impl DnsMessage {
         // Parse questions
         let mut offset = HEADER_SIZE;
         for _ in 0..msg.header.question_count {
-            let (question, new_offset) = Question::from_bytes(&bytes[offset..]);
+            let (question, new_offset) = Question::from_bytes(&bytes, offset);
             msg.questions.push(question);
-            offset += new_offset;
+            offset = new_offset;
+        }
+        // Parse Answer
+        for _ in 0..msg.header.answer_count {
+            let (answer, new_offset) = Answer::from_bytes(&bytes, offset);
+            msg.answers.push(answer);
+            offset = new_offset;
         }
         msg
     }
