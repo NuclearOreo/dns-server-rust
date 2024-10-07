@@ -119,7 +119,7 @@ mod tests {
             0x80, // query_or_response, opcode, authoritative_answer, truncated_message, recursion_desired
             0x00, // recursion_available, reserved, response_code
             0x00, 0x01, // question_count
-            0x00, 0x01, // answer_count
+            0x00, 0, // answer_count
             0x00, 0x00, // authoritative_count
             0x00, 0x00, // additional_count
             // Question
@@ -144,7 +144,7 @@ mod tests {
                 reserved: 0,
                 response_code: RCode::NoError,
                 question_count: 1,
-                answer_count: 1,
+                answer_count: 0,
                 authoritative_count: 0,
                 additional_count: 0,
             },
