@@ -1,15 +1,14 @@
-// External crates
-use env_logger;
-use log;
-
 // Internal modules
 mod dns;
 mod process;
 
-use std::net::UdpSocket;
-
-// External modules
+// External Packages
 use clap::Parser;
+use env_logger;
+use log;
+
+// Internal Packages
+use std::net::UdpSocket;
 
 // Constants
 const IP: &str = "127.0.0.1";
