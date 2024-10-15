@@ -15,7 +15,7 @@ use clap::Parser;
 const IP: &str = "127.0.0.1";
 const PORT: u16 = 2053;
 
-/// Simple program to greet a person
+// CLI Arguments
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
