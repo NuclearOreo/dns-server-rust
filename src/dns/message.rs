@@ -158,4 +158,67 @@ mod tests {
 
         assert_eq!(dns_message, expected_dns_message);
     }
+
+    #[test]
+    fn test_dns_message_from_bytes_with_truncated_message() {
+        let bytes = vec![
+            0xEF, 0xB6, // packet_id
+            0x01, 0x00, // flags
+            0x00, 0x02, // question_count
+            0x00, 0x00, // answer_count
+            0x00, 0x00, // authoritative_count
+            0x00, 0x00, // additional_count
+            // Question 1
+            3, b'a', b'b', b'c', 17, b'l', b'o', b'n', b'g', b'a', b's', b's', b'd', b'o', b'm',
+            b'a', b'i', b'n', b'n', b'a', b'm', b'e', 3, b'c', b'o', b'm', 0, 0x00,
+            0x01, // types
+            0x00, 0x01, // class
+            // Question 2 (compressed)
+            3, b'd', b'e', b'f', 0xC0, 0x10, // pointer to "longassdomainname.com"
+            0x00, 0x01, // types
+            0x00, 0x01, // class
+        ];
+
+        let header = DnsMessage::from_bytes(&bytes);
+        let expected_header = DnsMessage {
+            header: Header {
+                packet_id: 61366,
+                query_or_response: false,
+                opcode: Opcode::Query,
+                authoritative_answer: false,
+                truncated_message: false,
+                recursion_desired: true,
+                recursion_available: false,
+                reserved: 16,
+                response_code: RCode::NoError,
+                question_count: 2,
+                answer_count: 0,
+                authoritative_count: 0,
+                additional_count: 0,
+            },
+            questions: vec![
+                Question {
+                    tokens: vec![
+                        "abc".to_string(),
+                        "longassdomainname".to_string(),
+                        "com".to_string(),
+                    ],
+                    types: QueryType::A,
+                    class: QueryClass::IN,
+                },
+                Question {
+                    tokens: vec![
+                        "def".to_string(),
+                        "longassdomainname".to_string(),
+                        "com".to_string(),
+                    ],
+                    types: QueryType::A,
+                    class: QueryClass::IN,
+                },
+            ],
+            answers: vec![], // Assuming no answers are provided
+        };
+
+        assert_eq!(header, expected_header);
+    }
 }

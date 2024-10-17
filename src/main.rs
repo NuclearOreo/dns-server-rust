@@ -24,6 +24,7 @@ struct Args {
 }
 
 fn main() {
+    // Setting logging
     env_logger::init();
     log::info!("Starting DNS server");
 
@@ -34,8 +35,10 @@ fn main() {
     let udp_socket = UdpSocket::bind(format!("{IP}:{PORT}")).expect("Failed to bind to address");
     log::info!("Listening on {IP}:{PORT}");
 
+    // Buffer to store incoming data
     let mut buf = [0; 512];
 
+    // Main loop
     loop {
         match udp_socket.recv_from(&mut buf) {
             Ok((size, source)) => {

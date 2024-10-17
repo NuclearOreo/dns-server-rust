@@ -41,6 +41,7 @@ pub fn process(bytes: &[u8]) -> Vec<u8> {
 
 pub fn forward(address: &str, socket: &UdpSocket, bytes: &[u8]) -> Vec<u8> {
     log::info!("Forwarding DNS request");
+    log::debug!("Bytes: {:?}", bytes);
     let msg = DnsMessage::from_bytes(bytes);
     let mut final_response = DnsMessage::default();
 
