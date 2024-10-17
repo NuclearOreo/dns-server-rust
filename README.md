@@ -1,6 +1,6 @@
-# Project Title
+# Simple DNS Server
 
-[![progress-banner](https://backend.codecrafters.io/progress/dns-server/a668d002-8486-46fd-91b7-576ff34f52e1)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
+My implementation of a simple DNS server in Rust.
 
 This is a starting point for Rust solutions to the
 ["Build Your Own DNS server" Challenge](https://app.codecrafters.io/courses/dns-server/overview).
