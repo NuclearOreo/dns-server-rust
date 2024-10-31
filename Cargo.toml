@@ -1,14 +1,14 @@
 [package]
-name = "codecrafters-dns-server"
+name = "dns-server"
 version = "0.1.0"
-authors = ["Codecrafters <hello@codecrafters.io>"]
+authors = ["Ussama Azam"]
 edition = "2021"
 rust-version = "1.80"
 
 [dependencies]
-anyhow = "1.0.89"     # error handling
-bytes = "1.7.2"       # helps manage buffers
+anyhow = "1.0.91"                                    # error handling
+bytes = "1.8.0"                                      # helps manage buffers
 clap = { version = "4.5.20", features = ["derive"] }
-env_logger = "0.11.5" # logging
-log = "0.4.22"        # logging
-thiserror = "1.0.64"  # error handling
+env_logger = "0.11.5"                                # logging
+log = "0.4.22"                                       # logging
+thiserror = "1.0.65"                                 # error handling
